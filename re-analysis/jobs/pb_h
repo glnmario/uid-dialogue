@@ -35,6 +35,6 @@ python3 src/decontextualised_entropy.py \
 	--seed 0 \
 	--n_sent ${n_sent} \
 	--model_name gpt2 \
-	--model_path /scratch-shared/mariog/models/pb/gpt2-ft \
+	--model_path /scratch-shared/mariog/models/pb_gpt2-ft \
 	--max_seq_len ${maxlen} \
 	&> out/pb_gpt2-ft_${n_sent}_${maxlen}_$(date +"%FT%T")
