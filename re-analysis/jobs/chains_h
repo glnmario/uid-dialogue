@@ -1,35 +1,40 @@
 #!/bin/bash
+
+#SBATCH --partition=gpu
 #SBATCH --nodes=1
-#SBATCH --job-name=CHAh
-#SBATCH --time=00:30:00
-#SBATCH --partition=gpu_shared
-#SBATCH --gpus-per-node=1
+#SBATCH --gres=gpu:1
+#SBATCH --job-name=chains_h
+#SBATCH --time=1:00:00
+#SBATCH --output=slurm_output/%A.out
+# https://servicedesk.surfsara.nl/wiki/display/WIKI/Lisa+usage+and+accounting
+echo "${SLURM_JOB_ID}"
+date
 
-source ~/.bashrc
+source ${HOME}/.bashrc
+module purge
+module load 2022
+module load Anaconda3/2022.05
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda deactivate
+conda activate stat-gen-eval-3.10
 
-module load 2019
-source ${HOME}/projects/erp/venv/bin/activate
-
-# Copy the input data to scratch space
-cp -r ${HOME}/projects/erp/data ${TMPDIR}/data
+export ROOT="/home/${USER}/projects/uid-dialogue/"
 
 bsz=4
 n_sent=-1
 maxlen=1024
 dat=$(date +"%FT%T") 
 
-cd ${HOME}/projects/erp
-
-mkdir -p /project/dmg_data/erp/results_conll/pbchains_gpt2-ft_${n_sent}_${maxlen}_${dat}
+mkdir -p results/pbchains_gpt2-ft_${n_sent}_${maxlen}_${dat}
 
 #python3 -m torch.distributed.launch --nproc_per_node=1 --nnodes=1 --node_rank=0 
 python3 src/chain_analysis/decontextualised_surprisal.py \
-	--data_path /project/dmg_data/erp/data_clean/PB/chains/analysis.csv \
-	--out_path /project/dmg_data/erp/results_conll/pbchains_gpt2-ft_${n_sent}_${maxlen}_${dat} \
+	--data_path /lisa_migration/project/dmg_data/erp/data_clean/PB/chains/analysis.csv \
+	--out_path results/pbchains_gpt2-ft_${n_sent}_${maxlen}_${dat} \
 	--per_gpu_batch_size $bsz \
 	--seed 0 \
-	--model_name_or_path /project/dmg_data/erp/models/pb/gpt2_gpt2_bsz2_lr0.0001_epochs20_2021-06-02T03:30:42/ \
+	--model_name_or_path /lisa_migration/project/dmg_data/erp/models/pb/gpt2_gpt2_bsz2_lr0.0001_epochs20_2021-06-02T03:30:42/ \
 	--max_seq_len ${maxlen} \
-	&> out_conll/pbchains_gpt2-ft_${n_sent}_${maxlen}_${dat}
+	&> out/pbchains_gpt2-ft_${n_sent}_${maxlen}_${dat}
 
 

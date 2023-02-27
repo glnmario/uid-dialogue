@@ -1,38 +1,43 @@
 #!/bin/bash
+
+#SBATCH --partition=gpu
 #SBATCH --nodes=1
-#SBATCH --job-name=PBrndctx
+#SBATCH --gres=gpu:1
+#SBATCH --job-name=pb_ctx_rnd
 #SBATCH --time=1:00:00
-#SBATCH --partition=gpu_shared
-#SBATCH --gpus-per-node=1
+#SBATCH --output=slurm_output/%A.out
+# https://servicedesk.surfsara.nl/wiki/display/WIKI/Lisa+usage+and+accounting
+echo "${SLURM_JOB_ID}"
+date
 
-source ~/.bashrc
+source ${HOME}/.bashrc
+module purge
+module load 2022
+module load Anaconda3/2022.05
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda deactivate
+conda activate stat-gen-eval-3.10
 
-module load 2019
-source ${HOME}/projects/erp/venv/bin/activate
-
-# Copy the input data to scratch space
-cp -r ${HOME}/projects/erp/data ${TMPDIR}/data
+export ROOT="/home/${USER}/projects/uid-dialogue/"
 
 bsz=4
 n_sent=-1
 ctx=round_number
 maxlen=1024
 
-cd ${HOME}/projects/erp
-
-mkdir -p results_conll/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_$(date +"%FT%T") 
+mkdir -p results/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_$(date +"%FT%T")
 
 #python3 -m torch.distributed.launch --nproc_per_node=1 --nnodes=1 --node_rank=0 
 python3 src/contextualised_entropy.py \
-	--data_path data_clean/PB/analysis.csv \
-	--out_path results_conll/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_$(date +"%FT%T") \
+	--data_path /lisa_migration/project/dmg_data/erp/data_clean/PB/analysis.csv \
+	--out_path results/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_$(date +"%FT%T")  \
 	--per_gpu_batch_size $bsz \
 	--seed 0 \
 	--n_sent ${n_sent} \
-	--model_path /project/dmg_data/erp/models/pb/gpt2_gpt2_bsz2_lr0.0001_epochs20_2021-06-02T03:30:42/ \
+	--model_path /lisa_migration/project/dmg_data/erp/models/pb/gpt2_gpt2_bsz2_lr0.0001_epochs20_2021-06-02T03:30:42/ \
 	--model_name gpt2 \
 	--context_field ${ctx} \
 	--max_seq_len ${maxlen} \
-	&> out_conll/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_$(date +"%FT%T")
+	&> out/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_$(date +"%FT%T")
 
 
