@@ -1,0 +1,50 @@
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --job-name=PB-bncs
+#SBATCH --time=00:45:00
+#SBATCH --partition=gpu_shared
+#SBATCH --gpus-per-node=1
+
+source ~/.bashrc
+
+module load 2019
+source ${HOME}/projects/erp/venv/bin/activate
+
+# Copy the input data to scratch space
+cp -r ${HOME}/projects/erp/data ${TMPDIR}/data
+
+bsz=4
+n_sent=-1
+#ctx=doc_id
+maxlen=1024
+dat=$(date +"%FT%T")
+ctrl=bncs
+maxpos=56
+
+cd ${HOME}/projects/erp
+
+for ctx in dialogue_id #round_number
+do
+for seed in 13 42  #17
+do
+mkdir -p /project/dmg_data/erp/results_conll/pb_ctrl_${ctrl}_gpt2-ft_${ctx}_${seed}_${n_sent}_${maxlen}_${maxpos}_${dat}
+
+#python3 -m torch.distributed.launch --nproc_per_node=1 --nnodes=1 --node_rank=0 
+python3 src/contextualised_entropy_control.py \
+	--data_path /project/dmg_data/erp/data_clean/PB/analysis.csv2 \
+	--control_data_path /project/dmg_data/erp/data_clean/BNC/spoken/analysis.csv \
+	--out_path /project/dmg_data/erp/results_conll/pb_ctrl_${ctrl}_gpt2-ft_${ctx}_${seed}_${n_sent}_${maxlen}_${maxpos}_${dat} \
+	--size2sents_path /project/dmg_data/erp/data_clean/BNC/spoken/dialogue_id_sizes_to_sents.json \
+	--per_gpu_batch_size $bsz \
+	--add_special_tokens \
+	--seed ${seed} \
+	--n_sent ${n_sent} \
+	--model_name gpt2 \
+	--model_path /project/dmg_data/erp/models/pb/gpt2_gpt2_bsz2_lr0.0001_epochs20_2021-06-02T03:30:42/ \
+	--context_field ${ctx} \
+	--max_seq_len ${maxlen} \
+	--max_position ${maxpos} \
+	&> out_conll/pb_ctrl_${ctrl}_gpt2-ft_${ctx}_${seed}_${n_sent}_${maxlen}_${maxpos}_${dat}
+done
+done
+
