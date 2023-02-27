@@ -29,12 +29,10 @@ mkdir -p results/pbchains_gpt2-ft_${n_sent}_${maxlen}_${dat}
 
 #python3 -m torch.distributed.launch --nproc_per_node=1 --nnodes=1 --node_rank=0 
 python3 src/chain_analysis/decontextualised_surprisal.py \
-	--data_path /lisa_migration/project/dmg_data/erp/data_clean/PB/chains/analysis.csv \
+	--data_path /scratch-shared/mariog/data_clean/PB/chains/analysis.csv \
 	--out_path results/pbchains_gpt2-ft_${n_sent}_${maxlen}_${dat} \
 	--per_gpu_batch_size $bsz \
 	--seed 0 \
-	--model_name_or_path /lisa_migration/project/dmg_data/erp/models/pb/gpt2_gpt2_bsz2_lr0.0001_epochs20_2021-06-02T03:30:42/ \
+	--model_name_or_path /scratch-shared/mariog/pb_gpt2-ft \
 	--max_seq_len ${maxlen} \
 	&> out/pbchains_gpt2-ft_${n_sent}_${maxlen}_${dat}
-
-

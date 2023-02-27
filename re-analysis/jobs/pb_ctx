@@ -31,17 +31,15 @@ mkdir -p results/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_${maxpos}_${dat}
 
 #python3 -m torch.distributed.launch --nproc_per_node=1 --nnodes=1 --node_rank=0 
 python3 src/contextualised_entropy.py \
-	--data_path /lisa_migration/project/dmg_data/erp/data_clean/PB/analysis.csv \
+	--data_path /scratch-shared/mariog/data_clean/PB/analysis.csv \
 	--out_path results/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_${maxpos}_${dat} \
 	--per_gpu_batch_size $bsz \
 	--seed 0 \
 	--n_sent ${n_sent} \
 	--model_name gpt2 \
-	--model_path /lisa_migration/project/dmg_data/erp/models/pb/gpt2_gpt2_bsz2_lr0.0001_epochs20_2021-06-02T03:30:42/ \
+	--model_path /scratch-shared/mariog/pb_gpt2-ft \
 	--context_field ${ctx} \
 	--max_seq_len ${maxlen} \
 	--add_special_tokens \
 	--max_position ${maxpos} \
 	&> out/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_${maxpos}_${dat}
-
-
