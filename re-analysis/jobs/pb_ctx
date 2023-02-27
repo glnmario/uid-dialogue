@@ -37,7 +37,7 @@ python3 src/contextualised_entropy.py \
 	--seed 0 \
 	--n_sent ${n_sent} \
 	--model_name gpt2 \
-	--model_path /scratch-shared/mariog/pb_gpt2-ft \
+	--model_path /scratch-shared/mariog/models/pb_gpt2-ft \
 	--context_field ${ctx} \
 	--max_seq_len ${maxlen} \
 	--add_special_tokens \

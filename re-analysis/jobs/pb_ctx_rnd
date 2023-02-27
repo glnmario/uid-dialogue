@@ -34,7 +34,7 @@ python3 src/contextualised_entropy.py \
 	--per_gpu_batch_size $bsz \
 	--seed 0 \
 	--n_sent ${n_sent} \
-	--model_path /scratch-shared/mariog/pb_gpt2-ft \
+	--model_path /scratch-shared/mariog/models/pb_gpt2-ft \
 	--model_name gpt2 \
 	--context_field ${ctx} \
 	--max_seq_len ${maxlen} \
