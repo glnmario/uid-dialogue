@@ -294,6 +294,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     dataframe = pd.read_csv(args.data_path)
+
     if args.max_position > 0:
         try:
             dataframe = dataframe[dataframe['position'] <= args.max_position]

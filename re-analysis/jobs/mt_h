@@ -3,7 +3,7 @@
 #SBATCH --partition=gpu
 #SBATCH --nodes=1
 #SBATCH --gres=gpu:1
-#SBATCH --job-name=pb_h
+#SBATCH --job-name=mt_h
 #SBATCH --time=1:00:00
 #SBATCH --output=slurm_output/%A.out
 # https://servicedesk.surfsara.nl/wiki/display/WIKI/Lisa+usage+and+accounting
@@ -25,16 +25,16 @@ n_sent=-1
 maxlen=1024
 dat=$(date +"%FT%T")
 
-mkdir -p results/pb_gpt2-ft_${n_sent}_${maxlen}_${dat}
+mkdir -p results/mt_gpt2-ft_${n_sent}_${maxlen}_${dat}
 
 #python3 -m torch.distributed.launch --nproc_per_node=1 --nnodes=1 --node_rank=0 
 python3 src/decontextualised_entropy.py \
-	--data_path /scratch-shared/mariog/data_clean/PB/analysis.csv \
-	--out_path results/pb_gpt2-ft_${n_sent}_${maxlen}_${dat}  \
+	--data_path /scratch-shared/mariog/data_clean/MT/analysis.csv \
+	--out_path results/mt_gpt2-ft_${n_sent}_${maxlen}_${dat}  \
 	--per_gpu_batch_size $bsz \
 	--seed 0 \
 	--n_sent ${n_sent} \
 	--model_name gpt2 \
-	--model_path /scratch-shared/mariog/models/pb_gpt2-ft \
+	--model_path /scratch-shared/mariog/models/mt_gpt2-ft \
 	--max_seq_len ${maxlen} \
-	&> out/pb_gpt2-ft_${n_sent}_${maxlen}_${dat}
+	&> out/mt_gpt2-ft_${n_sent}_${maxlen}_${dat}

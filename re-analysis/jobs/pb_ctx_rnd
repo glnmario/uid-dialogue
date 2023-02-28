@@ -24,13 +24,14 @@ bsz=4
 n_sent=-1
 ctx=round_number
 maxlen=1024
+dat=$(date +"%FT%T")
 
-mkdir -p results/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_$(date +"%FT%T")
+mkdir -p results/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_${dat}
 
 #python3 -m torch.distributed.launch --nproc_per_node=1 --nnodes=1 --node_rank=0 
 python3 src/contextualised_entropy.py \
 	--data_path /scratch-shared/mariog/data_clean/PB/analysis.csv \
-	--out_path results/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_$(date +"%FT%T")  \
+	--out_path results/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_${dat} \
 	--per_gpu_batch_size $bsz \
 	--seed 0 \
 	--n_sent ${n_sent} \
@@ -38,4 +39,4 @@ python3 src/contextualised_entropy.py \
 	--model_name gpt2 \
 	--context_field ${ctx} \
 	--max_seq_len ${maxlen} \
-	&> out/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_$(date +"%FT%T")
+	&> out/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_${dat}
