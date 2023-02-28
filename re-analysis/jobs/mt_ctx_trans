@@ -22,7 +22,7 @@ export ROOT="/home/${USER}/projects/uid-dialogue/"
 
 bsz=4
 n_sent=-1
-ctx=dialogue_id
+ctx=transaction_number
 maxlen=1024
 #maxpos=56
 dat=$(date +"%FT%T")
