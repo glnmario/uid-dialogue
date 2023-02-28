@@ -40,6 +40,5 @@ python3 src/contextualised_entropy.py \
 	--model_path /scratch-shared/mariog/models/pb_gpt2-ft \
 	--context_field ${ctx} \
 	--max_seq_len ${maxlen} \
-	--add_special_tokens \
 	--max_position ${maxpos} \
 	&> out/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_${maxpos}_${dat}
