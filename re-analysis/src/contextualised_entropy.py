@@ -265,7 +265,6 @@ if __name__ == '__main__':
     parser.add_argument(
         "--context_field", type=str, required=True,
         help="The dataframe column name for the field that distinguishes different contexts"
-             "(e.g., 'doc_id' for PTB or 'path' for BNC."
     )
     parser.add_argument(
         "--max_seq_len", default=1024, type=int,

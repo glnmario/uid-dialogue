@@ -24,7 +24,7 @@ bsz=4
 n_sent=-1
 ctx=dialogue_id
 maxlen=1024
-maxpos=56
+#maxpos=56
 dat=$(date +"%FT%T")
 
 mkdir -p results/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_${maxpos}_${dat}
@@ -40,5 +40,4 @@ python3 src/contextualised_entropy.py \
 	--model_path /scratch-shared/mariog/models/pb_gpt2-ft \
 	--context_field ${ctx} \
 	--max_seq_len ${maxlen} \
-	--max_position ${maxpos} \
-	&> out/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_${maxpos}_${dat}
+	&> out/pb_gpt2-ft_${ctx}_${n_sent}_${maxlen}_${dat}
