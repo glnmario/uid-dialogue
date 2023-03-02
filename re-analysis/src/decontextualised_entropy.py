@@ -9,7 +9,7 @@ from torch.nn.functional import log_softmax
 from torch.utils.data import DataLoader, SequentialSampler, DistributedSampler
 from tqdm import tqdm
 from transformers import GPT2Tokenizer, GPT2LMHeadModel, AutoTokenizer, AutoModelForCausalLM
-from lm_utils import pad, SentenceDataset
+from lm_utils import pad, DecontextualisedDataset
 
 logger = logging.getLogger(__name__)
 
@@ -100,7 +100,7 @@ def compute_entropy(args, dataframe):
             [item[1] for item in batch]
         ]
 
-    data = SentenceDataset(dataframe, tokenizer, args.max_seq_len)
+    data = DecontextualisedDataset(dataframe, tokenizer, args.max_seq_len)
     sampler = SequentialSampler(data) if args.local_rank == -1 else DistributedSampler(data, shuffle=False)
     dataloader = DataLoader(data, sampler=sampler, batch_size=args.batch_size, collate_fn=collate)
 

@@ -102,8 +102,8 @@ def compute_entropy(args, dataframe):
 
     def collate(batch):
         return [
-            pad(tokenizer, [item[0] for item in batch], attention_mask=True),
-            [item[1] for item in batch],
+            [item[0] for item in batch],
+            pad(tokenizer, [item[1] for item in batch], attention_mask=True),
             [item[2] for item in batch],
         ]
 
@@ -134,7 +134,7 @@ def compute_entropy(args, dataframe):
     iterator = tqdm(dataloader, desc='Iteration', disable=args.local_rank not in [-1, 0])
     for step, batch in enumerate(iterator):
 
-        inputs, start_idx, df_idx = batch
+        df_idx, inputs, start_idx  = batch
 
         inputs['input_ids'] = inputs['input_ids'].to(device)
         inputs['attention_mask'] = inputs['attention_mask'].to(device)
